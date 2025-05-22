@@ -26,6 +26,7 @@ OBJS = \
   $K/pipe.o \
   $K/exec.o \
   $K/sysfile.o \
+  $K/sysutil.o \
   $K/kernelvec.o \
   $K/plic.o \
   $K/virtio_disk.o
@@ -69,7 +70,7 @@ CFLAGS += -fno-builtin-memcpy -Wno-main
 CFLAGS += -fno-builtin-printf -fno-builtin-fprintf -fno-builtin-vprintf
 CFLAGS += -I.
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
-
+CFLAGS += -DBOOT_EPOCH=$(shell date +%s)
 # Disable PIE when possible (for Ubuntu 16.10 toolchain)
 ifneq ($(shell $(CC) -dumpspecs 2>/dev/null | grep -e '[^f]no-pie'),)
 CFLAGS += -fno-pie -no-pie
@@ -137,8 +138,23 @@ UPROGS=\
 	$U/_stressfs\
 	$U/_usertests\
 	$U/_grind\
+	$U/_fact\
 	$U/_wc\
 	$U/_zombie\
+	$U/_kbdint\
+	$U/_countsyscall\
+	$U/_ps\
+	$U/_getppid\
+	$U/_rand\
+	$U/_datetime\
+	$U/_mv\
+	$U/_find\
+	$U/_add\
+	$U/_sleep\
+	$U/_testsched\
+	$U/_touch\
+	$U/_cp\
+	$U/_childload\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

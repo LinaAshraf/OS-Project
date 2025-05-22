@@ -1,8 +1,16 @@
+#include "kernel/types.h"
+#include "kernel/datetime.h"
+#include "kernel/pstat.h"
 struct stat;
+
+
+
 
 // system calls
 int fork(void);
 int exit(int) __attribute__((noreturn));
+
+
 int wait(int*);
 int pipe(int*);
 int write(int, const void*, int);
@@ -22,6 +30,16 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int kbdint(void);
+int countsyscall(void);
+int getptable(struct pstat *buf, uint64 max_count);
+int getppid(void);
+int datetime(struct datetime*);
+int random(void);
+int setpriority(int priority);
+int getpriority(void);
+uint64 get_avg_waiting_time(void);
+uint64 getwait(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

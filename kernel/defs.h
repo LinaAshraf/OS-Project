@@ -9,6 +9,8 @@ struct sleeplock;
 struct stat;
 struct superblock;
 
+
+
 // bio.c
 void            binit(void);
 struct buf*     bread(uint, uint);
@@ -106,9 +108,12 @@ void            yield(void);
 int             either_copyout(int user_dst, uint64 dst, void *src, uint64 len);
 int             either_copyin(void *dst, int user_src, uint64 src, uint64 len);
 void            procdump(void);
-
+int             getptable(uint64, uint64);
+void            update_time(void);
 // swtch.S
 void            swtch(struct context*, struct context*);
+uint64 get_waiting_time(int);
+
 
 // spinlock.c
 void            acquire(struct spinlock*);

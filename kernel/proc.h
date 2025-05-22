@@ -1,3 +1,5 @@
+
+extern int sched_mode;
 // Saved registers for kernel context switches.
 struct context {
   uint64 ra;
@@ -17,6 +19,10 @@ struct context {
   uint64 s10;
   uint64 s11;
 };
+#define SCHED_ROUND_ROBIN 0
+#define SCHED_FCFS        1
+#define SCHED_PRIORITY    2
+// Add this structure definition
 
 // Per-CPU state.
 struct cpu {
@@ -84,7 +90,12 @@ enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 // Per-process state
 struct proc {
   struct spinlock lock;
-
+  
+  uint64 create_time;  // Add this to track process creation time
+  uint64 run_time;
+  uint64 priority;
+  uint64 etime;  // exit time, set on process exit
+  uint64 waiting_time;
   // p->lock must be held when using these:
   enum procstate state;        // Process state
   void *chan;                  // If non-zero, sleeping on chan

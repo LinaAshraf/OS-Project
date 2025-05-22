@@ -6,7 +6,7 @@
 #include "proc.h"
 #include "syscall.h"
 #include "defs.h"
-
+int syscall_count=0;
 // Fetch the uint64 at addr from the current process.
 int
 fetchaddr(uint64 addr, uint64 *ip)
@@ -57,7 +57,10 @@ void
 argint(int n, int *ip)
 {
   *ip = argraw(n);
+
 }
+
+
 
 // Retrieve an argument as a pointer.
 // Doesn't check for legality, since
@@ -101,6 +104,19 @@ extern uint64 sys_unlink(void);
 extern uint64 sys_link(void);
 extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
+extern uint64 sys_kbdint(void);
+extern uint64 sys_countsyscall(void);
+extern uint64 sys_getptable(void);
+extern uint64 sys_getppid(void);
+extern uint64 sys_datetime(void);
+extern uint64 sys_random(void);
+extern uint64 sys_setpriority(void);
+extern uint64 sys_getpriority(void);
+extern uint64 sys_get_avg_waiting_time(void);
+extern uint64 sys_getwait(void);
+extern uint64 last_waiting_time;
+
+
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -126,6 +142,17 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_kbdint]  sys_kbdint,
+[SYS_countsyscall] sys_countsyscall,
+[SYS_getptable] sys_getptable,
+[SYS_getppid] sys_getppid,
+[SYS_datetime] sys_datetime,
+[SYS_random] sys_random,
+[SYS_setpriority] sys_setpriority,
+[SYS_getpriority]   sys_getpriority,
+[SYS_get_avg_waiting_time] sys_get_avg_waiting_time,
+[SYS_getwait] sys_getwait,
+
 };
 
 void
@@ -139,9 +166,15 @@ syscall(void)
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0
     p->trapframe->a0 = syscalls[num]();
+    syscall_count++;
   } else {
     printf("%d %s: unknown sys call %d\n",
             p->pid, p->name, num);
     p->trapframe->a0 = -1;
   }
+}
+uint64
+sys_getlastwait(void)
+{
+  return last_waiting_time;
 }

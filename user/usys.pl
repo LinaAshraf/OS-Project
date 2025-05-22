@@ -14,7 +14,7 @@ sub entry {
     print " ecall\n";
     print " ret\n";
 }
-	
+
 entry("fork");
 entry("exit");
 entry("wait");
@@ -36,3 +36,13 @@ entry("getpid");
 entry("sbrk");
 entry("sleep");
 entry("uptime");
+entry("kbdint");
+entry("countsyscall");
+entry("getptable");
+entry("getppid");
+entry("datetime");
+entry("random");
+entry("setpriority");
+entry("getpriority");
+entry("getwait");
+

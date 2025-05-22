@@ -12,4 +12,10 @@
 #define FSSIZE       2000  // size of file system in blocks
 #define MAXPATH      128   // maximum file path name
 #define USERSTACK    1     // user stack pages
+// Add scheduler policy constants
+#define SCHED_DEFAULT 0
+#define SCHED_FIFO    1
+#define SCHED_RR      2
 
+// Add extern declaration
+extern int sched_policy;

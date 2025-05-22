@@ -5,6 +5,14 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include "pstat.h"
+extern int completed_processes;
+extern int total_waiting_time;
+uint64
+sys_getwait(void)
+{
+  return myproc()->waiting_time;
+}
 
 uint64
 sys_exit(void)
@@ -13,6 +21,11 @@ sys_exit(void)
   argint(0, &n);
   exit(n);
   return 0;  // not reached
+}
+uint64
+sys_get_avg_waiting_time(void)
+{
+  return (completed_processes > 0) ? total_waiting_time / completed_processes : 0;
 }
 
 uint64
@@ -90,4 +103,49 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+
+// Helper function to safely copy strings
+
+uint64 sys_getptable(void) {
+  uint64 addr;
+  int nproc;
+
+
+  // Use temp variables to capture errors
+  argint(0, &nproc);
+  argaddr(1, &addr);
+
+  // Manually verify arguments
+  struct proc *p = myproc();
+  if(addr >= p->sz || addr+sizeof(struct pstat) > p->sz)
+  return -1;
+
+  return getptable(nproc, addr);
+}
+uint64
+sys_setpriority(void) {
+  int prio;
+  argint(0, &prio);  // note: no checking return value, argint returns void
+
+  if(prio < 0) prio = 0;
+  if(prio > 9) prio = 9;
+
+  myproc()->priority = (uint64)prio;
+  return 0;
+}
+
+uint64
+sys_getppid(void)
+{
+    struct proc *p = myproc();
+
+    if(p->parent)  // Check if parent exists
+        return p->parent->pid;
+    return 1;  // Return 1 (init's PID) if no parent
+}
+uint64
+sys_getpriority(void) {
+  return myproc()->priority;
 }
